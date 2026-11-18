@@ -79,6 +79,14 @@ class PredictRequest(BaseModel):
     session_id: Optional[str] = None
     words: List[WordData]
 
+@app.get("/")
+def health_check():
+    return {
+        "status": "online",
+        "service": "EyeTrackit Inference API",
+        "model_loaded": ridge_model is not None
+    }
+
 @app.post("/predict")
 def predict_difficulty(req: PredictRequest):
     if ridge_model is None or preprocessor is None:
