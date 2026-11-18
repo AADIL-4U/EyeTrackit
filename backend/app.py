@@ -11,12 +11,18 @@ import joblib
 from pathlib import Path
 import csv
 
-# Add src to sys path for imports
-ROOT_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(str(ROOT_DIR))
-sys.path.append(str(ROOT_DIR / "src"))
+import re
 
-from src.feature_engineer import count_syllables
+ROOT_DIR = Path(__file__).resolve().parent.parent
+
+def count_syllables(word: str) -> int:
+    word = str(word).lower()
+    if not word:
+        return 1
+    count = len(re.findall(r'[aeiouy]+', word))
+    if word.endswith('e') and not word.endswith('le'):
+        count -= 1
+    return max(1, count)
 
 app = FastAPI(title="Reading Difficulty Live Inference")
 
