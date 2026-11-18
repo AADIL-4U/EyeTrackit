@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+.vite/
+
+# Scratch & Logs
+scratch/
+results/run.log
+.DS_Store
+Thumbs.db
+
+# Optional: Uncomment below if raw Provo CSV exceeds 50MB
+# data/raw/

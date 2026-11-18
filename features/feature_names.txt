@@ -1,0 +1,12 @@
+first_fixation_ms_log
+first_pass_ms_log
+fixation_count
+regression_count
+skip_flag
+word_length
+syllable_count
+word_length_sq
+char_per_syllable
+is_long_word
+word_position
+is_sentence_initial
