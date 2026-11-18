@@ -1,11 +1,16 @@
 # EyeTrackit — Real-Time Reading Difficulty & Cognitive Load Prediction
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?logo=vercel&logoColor=white)](https://eyetrackit.vercel.app)
+[![API Status](https://img.shields.io/badge/Inference_API-Render-46E3B7?logo=render&logoColor=black)](https://eyetrackit-api.onrender.com)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-LSTM-EE4C2C?logo=pytorch&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-RidgeCV-F7931E?logo=scikit-learn&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-Vite-61DAFB?logo=react&logoColor=black)
 ![WebGazer.js](https://img.shields.io/badge/WebGazer.js-Webcam_Eye_Tracking-7C3AED)
+
+> **Live Web Application:** [https://eyetrackit.vercel.app](https://eyetrackit.vercel.app)  
+> **Live Inference API:** [https://eyetrackit-api.onrender.com](https://eyetrackit-api.onrender.com) *(Note: Hosted on Render's free tier—allow ~30–50 seconds for initial cold-start wake-up on the first request.)*
 
 **EyeTrackit** is an end-to-end Artificial Intelligence and Deep Learning system that predicts word-level reading difficulty (cognitive load) by combining eye-movement dynamics with psycholinguistic features.
 
@@ -82,7 +87,7 @@ Traditional eye-tracking studies rely on expensive infrared hardware (e.g., EyeL
 EyeTrackit/
 ├── backend/
 │   ├── app.py                          # FastAPI inference server, fallback heuristics & CSV logger
-│   └── requirements.txt                # Backend Python dependencies
+│   └── requirements.txt                # Lightweight backend dependencies (deployed on Render)
 ├── data/
 │   ├── raw/
 │   │   └── provo/
@@ -118,7 +123,7 @@ EyeTrackit/
 │   ├── lstm_training_curves.png        # Learning curves over 30 training epochs
 │   ├── metrics.csv                     # Evaluation metrics table (RMSE, Pearson R, R2)
 │   ├── ridge_feature_importance.png    # Ranked Ridge regression coefficients
-│   └── shap_summary.png                # SHAP beeswarm feature impact plot
+│   └── shap_summary.png              # SHAP beeswarm feature impact plot
 ├── src/
 │   ├── data_loader.py                  # OSF API fetcher & Provo Corpus preprocessor
 │   ├── evaluator.py                    # Metric calculation, plots & SHAP explainability
@@ -209,7 +214,7 @@ In natural reading, cognitive processing of one word frequently spills over onto
 
 ## Live Web Application Walkthrough
 
-The interactive frontend (`EyeTrack ML`) guides the user through a four-stage real-time reading session:
+The interactive frontend (`EyeTrack ML`, deployed on **Vercel** and backed by **Render**) guides the user through a four-stage real-time reading session:
 
 1. **9-Point Screen Calibration (`WebGazerProvider.jsx`):** Initializes `window.webgazer` using its built-in ridge gaze estimator. The user clicks 9 locations across screen corners, edges, and center while fixating on the cursor.
 2. **Passage Configuration (`App.jsx`):** Once calibrated, the webcam preview automatically hides to prevent visual distraction, and the user can read the default passage or paste custom text.
@@ -232,10 +237,13 @@ The interactive frontend (`EyeTrack ML`) guides the user through a four-stage re
 
 ## REST API Specification
 
-`backend/app.py` exposes a FastAPI inference endpoint at `http://localhost:8000/predict`. To guarantee robust predictions even when low-FPS webcam tracking skips short words, the endpoint combines ML inference with domain heuristics:
+`backend/app.py` exposes a FastAPI inference service (live at `https://eyetrackit-api.onrender.com` or locally at `http://localhost:8000`). To guarantee robust predictions even when low-FPS webcam tracking skips short words, the `/predict` endpoint combines ML inference with domain heuristics:
 - **Baseline Gaze Imputation:** Zero/untracked `first_fixation_ms` and `first_pass_ms` values are imputed to `200.0 ms` prior to feature scaling (`preprocessor.transform(X)`).
 - **Linguistic Fallback Heuristic:** For words missed by the webcam tracker (`first_fixation_ms <= 0`), a psycholinguistic baseline $t_{\text{heur}} = 180.0 + 12.0 \cdot L + 5.0 \cdot S$ is blended (`max(predicted_ms, heuristic_ms)`) and floored at `150.0 ms`.
 - **Continual Telemetry Logging:** Every session payload is appended to `data/processed/live_webcam_data.csv` for future model fine-tuning.
+
+### `GET /` (Health Check)
+Returns service availability and confirms that `ridge_model.pkl` is loaded in memory.
 
 ### `POST /predict`
 
@@ -340,4 +348,5 @@ Navigate to `http://localhost:5173` in your browser, grant camera permissions, c
 - **Course:** B.Tech in Computer Science and Engineering (III Year, I Semester)
 - **Subject:** Artificial Intelligence and Deep Learning
 - **Institution:** School of Computer Science & Artificial Intelligence, SR University, Warangal, Telangana, India
+- **Live Demo:** [https://eyetrackit.vercel.app](https://eyetrackit.vercel.app)
 - **Repository:** [https://github.com/AADIL-4U/EyeTrackit](https://github.com/AADIL-4U/EyeTrackit)
